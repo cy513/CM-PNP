@@ -35,7 +35,7 @@ rel_model.to(device)
 rel_model.eval()
 
 batch_size = 1024
-
+total_num = len(test_examples)
 keydict = {}
 model_dir = './periodic_model_{}/'.format(args.dataset)
 for i, j, k in os.walk(model_dir):
@@ -48,7 +48,7 @@ for i, j, k in os.walk(model_dir):
 if len(keydict) == 0 and args.comb_model == 1:
     print('warning: there is not a periodic model')
 
-tmp_examples = test_examples
+tmp_examples = test_examples.copy()
 for item in tmp_examples:
     if (item[0], item[1]) in keydict:
         test_examples.remove(item)
@@ -91,10 +91,10 @@ for key in keydict:
         score = score.squeeze(0)
         acc_mrr, acc_hits1, acc_hits3, acc_hits10 = eval.rank(score, item[0], acc_mrr, acc_hits1, acc_hits3, acc_hits10)
 
-mrr = (np_acc_mrr + acc_mrr) / test_num
-hits1 = (np_acc_hits1 + acc_hits1) / test_num
-hits3 = (np_acc_hits3 + acc_hits3) / test_num
-hits10 = (np_acc_hits10 + acc_hits10) / test_num
+mrr = (np_acc_mrr + acc_mrr) / total_num
+hits1 = (np_acc_hits1 + acc_hits1) / total_num
+hits3 = (np_acc_hits3 + acc_hits3) / total_num
+hits10 = (np_acc_hits10 + acc_hits10) / total_num
 
 print("MRR : {:.6f}".format(mrr))
 print("Hits @ 1: {:.6f}".format(hits1))
